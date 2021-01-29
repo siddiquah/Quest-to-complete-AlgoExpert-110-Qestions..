@@ -1,66 +1,121 @@
-class Node {
-    int key;
-    Node left, right;
+public class BinarySearchTree{
+    public static class Node{
+        int data;
+        Node left;
+        Node right;
 
-    public Node(int item) {
-        key = item;
-        left = right = null;
+        public Node(int data){
+            this.data = data;
+            this.left = null;
+            this.right = null;
+        }
     }
-}
-class Bt {
-    Node root;
+    public Node root;
 
-    Bt(int key) {
-        root = new Node(key);
-    }
-
-    Bt() {
+    public BinarySearchTree(){
         root = null;
     }
+    public void insert(int data) {
+        Node newNode = new Node(data);
+        if(root == null){
+            root = newNode;
+            return;
+        }
+        else {
+            Node current = root, parent = null;
 
-    // Inorder
-    public void traverseInOrder(Node node) {
-        if (node != null) {
-            traverseInOrder(node.left);
-            System.out.print(" " + node.key);
-            traverseInOrder(node.right);
+            while(true) {
+                parent = current;
+                if(data < current.data) {
+                    current = current.left;
+                    if(current == null) {
+                        parent.left = newNode;
+                        return;
+                    }
+                }
+                else {
+                    current = current.right;
+                    if(current == null) {
+                        parent.right = newNode;
+                        return;
+                    }
+                }
+            }
         }
     }
-
-    // Postorder
-    public void traversePostOrder(Node node) {
-        if (node != null) {
-            traversePostOrder(node.left);
-            traversePostOrder(node.right);
-            System.out.print(" " + node.key);
-        }
+    public Node minNode(Node root) {
+        if (root.left != null)
+            return minNode(root.left);
+        else
+            return root;
     }
 
-    // Preorder
-    public void traversePreOrder(Node node) {
-        if (node != null) {
-            System.out.print(" " + node.key);
-            traversePreOrder(node.left);
-            traversePreOrder(node.right);
+    public Node deleteNode(Node node, int value) {
+        if(node == null){
+            return null;
+        }
+        else {
+            if(value < node.data)
+                node.left = deleteNode(node.left, value);
+
+            else if(value > node.data)
+                node.right = deleteNode(node.right, value);
+            else {
+                if(node.left == null && node.right == null)
+                    node = null;
+
+                else if(node.left == null) {
+                    node = node.right;
+                }
+                else if(node.right == null) {
+                    node = node.left;
+                }
+                else {
+                    Node temp = minNode(node.right);
+                    node.data = temp.data;
+                    node.right = deleteNode(node.right, temp.data);
+                }
+            }
+            return node;
+        }
+    }
+    public void inorderTraversal(Node node) {
+        if(root == null){
+            System.out.println("Tree is empty");
+            return;
+        }
+        else {
+
+            if(node.left!= null)
+                inorderTraversal(node.left);
+            System.out.print(node.data + " ");
+            if(node.right!= null)
+                inorderTraversal(node.right);
+
         }
     }
 
     public static void main(String[] args) {
-        Bt tree = new Bt();
 
-        tree.root = new Node(1);
-        tree.root.left = new Node(2);
-        tree.root.right = new Node(3);
-        tree.root.left.left = new Node(4);
-        tree.root.left.right = new Node(5);
-        tree.root.right.left = new Node(6);
-        tree.root.right.right = new Node(7);
+        BinarySearchTree bt = new BinarySearchTree();
+        bt.insert(50);
+        bt.insert(30);
+        bt.insert(70);
+        bt.insert(60);
+        bt.insert(10);
+        bt.insert(90);
 
-        System.out.println("Pre order Traversal is ");
-        tree.traversePreOrder(tree.root);
-        System.out.println("\n In order Traversal is ");
-        tree.traverseInOrder(tree.root);
-        System.out.println("\n Post order Traversal is ");
-        tree.traversePostOrder(tree.root);
+        System.out.println("Binary search tree after insertion:");
+        bt.inorderTraversal(bt.root);
+        Node deletedNode = null;
+        deletedNode = bt.deleteNode(bt.root, 90);
+        System.out.println("\nBinary search tree after deleting node 90:");
+        bt.inorderTraversal(bt.root);
+        deletedNode = bt.deleteNode(bt.root, 30);
+        System.out.println("\nBinary search tree after deleting node 30:");
+        bt.inorderTraversal(bt.root);
+        deletedNode = bt.deleteNode(bt.root, 50);
+        System.out.println("\nBinary search tree after deleting node 50:");
+        bt.inorderTraversal(bt.root);
     }
 }
